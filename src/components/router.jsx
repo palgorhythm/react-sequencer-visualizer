@@ -5,17 +5,17 @@ import About from "../pages/about";
 import Visualizer from "../pages/visualizer";
 
 /**
-* The router is imported in app.jsx
-*
-* Our site just has two routes in it–Home and About
-* Each one is defined as a component in /pages
-* We use Switch to only render one route at a time https://github.com/molefrog/wouter#switch-
-*/
+ * The router is imported in app.jsx
+ *
+ * Our site just has two routes in it–Home and About
+ * Each one is defined as a component in /pages
+ * We use Switch to only render one route at a time https://github.com/molefrog/wouter#switch-
+ */
 
 export default () => (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/about" component={About} />
-      <Route path="/visualizer" component={Visualizer} />
-    </Switch>
+  <Switch>
+    <Route path="/" component={Home} />
+    <Route path="/about" component={About} />
+    <Route path="/visualizer" component={Visualizer} />
+  </Switch>
 );

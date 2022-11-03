@@ -1,4 +1,3 @@
-import { getRandomColor, objects } from "./visualizer.js";
 import { synthConfig } from "./synthConfig.js";
 
 // SECTION 1: ADD MUSIC BUTTON !
@@ -9,7 +8,7 @@ let button = document.getElementById("start-button"); // find the button by its 
 button.addEventListener("click", startSequencer); // when u click it, run startSequencer function
 
 function startSequencer() {
-  // set our synth letiable. 
+  // set our synth letiable.
   // synthConfig lives in synthConfig.js: check it out and play with some of the values!
   synth = new Tone.DuoSynth(synthConfig).toDestination();
 
@@ -44,30 +43,28 @@ loopNotes = [
 function runSequenceStep(time, value) {
   let currentStep = Math.round((part ? part.progress : 0) * 16);
 
-  applyMusicToGraphics(currentStep)
+  applyMusicToGraphics(currentStep);
 
   //actually play the note!
   synth.triggerAttackRelease(value.note, "32n", time, value.velocity);
 }
 
-
 // SECTION 3: APPLY MUSIC TO THE GRAPHICS WE CREATED!
-function applyMusicToGraphics(currentStep){
-  for (let i = 0; i < objects.length; i += 1) {
-    if (i === currentStep) {
-      // makes the object corresponding to the current step get bigger!
-      objects[i].scale.set(1.5, 1.5, 1.5);
-    } else {
-      objects[i].scale.set(1, 1, 1);
-    }
-
-    if (currentStep === 0) {
-      // we're at the beginning of the musical loop!
-      objects[i].scale.set(2, 2, 2);
-      objects[i].material.color.set(getRandomColor());
-      // setRandomNote(i);
-    }
-  }
+function applyMusicToGraphics(currentStep) {
+  // for (let i = 0; i < objects.length; i += 1) {
+  //   if (i === currentStep) {
+  //     // makes the object corresponding to the current step get bigger!
+  //     objects[i].scale.set(1.5, 1.5, 1.5);
+  //   } else {
+  //     objects[i].scale.set(1, 1, 1);
+  //   }
+  //   if (currentStep === 0) {
+  //     // we're at the beginning of the musical loop!
+  //     objects[i].scale.set(2, 2, 2);
+  //     objects[i].material.color.set(getRandomColor());
+  //     // setRandomNote(i);
+  //   }
+  // }
 }
 
 function setRandomNote(objectIndex) {
