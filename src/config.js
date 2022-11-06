@@ -1,4 +1,4 @@
-let voice0 = {
+const voice0 = {
   volume: -20,
   portamento: 50,
   oscillator: {
@@ -17,7 +17,7 @@ let voice0 = {
     release: 0.2,
   },
 };
-let voice1 = {
+const voice1 = {
   volume: -20,
   portamento: 100,
   oscillator: {
@@ -37,10 +37,15 @@ let voice1 = {
   },
 };
 
-export let synthConfig = {
-  vibratoAmount: 0.5,
-  vibratoRate: 5,
-  harmonicity: 1,
-  voice0,
-  voice1,
+export const CONFIG = {
+  synth: {
+    vibratoAmount: 0.5,
+    vibratoRate: 5,
+    harmonicity: 1,
+    voice0,
+    voice1,
+  },
+  visualizer: {
+    baseRotationSpeed: 0.04,
+  }
 };

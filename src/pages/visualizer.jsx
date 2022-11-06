@@ -1,160 +1,102 @@
-import { createRoot } from 'react-dom/client'
-import React, { useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import React, { useRef, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Sequencer } from "../components/sequencer";
+import {getRandomColor, getRandomGeometry} from '../lib/utils'
+import { CONFIG } from "../config";
 
-// SECTION 2: CREATING AN OBJECT
-function createCube(color = "#00FFAA") {
-  // create a geometry, a material, and then make the mesh out of those two components.
-  let geometry = <boxGeometry/>;
-  let material = <meshBasicMaterial color/>;
-  let newCube = <mesh geometry material/>;
-
-  return newCube;
+// Initialize an array that will hold configuration values
+// for our 3D objects.
+const objectConfigs = []
+const positions = [
+  [-3, 1],
+  [-1, 1],
+  [1, 1],
+  [3, 1],
+  [-3, 1 / 3],
+  [-1, 1 / 3],
+  [1, 1 / 3],
+  [3, 1 / 3],
+  [-3, -1 / 3],
+  [-1, -1 / 3],
+  [1, -1 / 3],
+  [3, -1 / 3],
+  [-3, -1],
+  [-1, -1],
+  [1, -1],
+  [3, -1],
+];
+for (let i = 0; i < positions.length; i += 1) {
+  objectConfigs.push({
+    rotation: [
+      Math.random() * CONFIG.visualizer.baseRotationSpeed,
+      Math.random() * CONFIG.visualizer.baseRotationSpeed,
+      Math.random() * CONFIG.visualizer.baseRotationSpeed,
+    ],
+    color: getRandomColor(),
+    geometry: getRandomGeometry(),
+    basePosition: [...positions[i], 0]
+  });
 }
 
-// SECTION 3: ANIMATING!
 
-// create a cube
-// let cube = createCube();
-export let objects = createManyRandomObjects();
-let rotations = [];
-// loop from 0 all the way to 15 (bc we have 16 objects)
-for (let i = 0; i < objects.length; i += 1) {
-  // create a random x, y, and z rotation for the current object.
-  rotations.push([
-    Math.random() * 0.03,
-    Math.random() * 0.03,
-    Math.random() * 0.03,
-  ]);
-}
-
-
-// SECTION 4: CREATE FUNCTIONS TO GET RANDOM COLORS/SHAPES
-export function getRandomColor() {
-  let colors = [
-    "#ffadad",
-    "#ffd6a5",
-    "#fdffb6",
-    "#caffbf",
-    "#9bf6ff",
-    "#a0c4ff",
-    "#bdb2ff",
-    "#ffc6ff",
-    "#007BFF",
-    "#FFAAEE",
-    "#B7BB4E",
-    "#FBBFAA",
-    "#00D2E0",
-    "#BBFFAA",
-    "#FFAA44",
-    "#55AA55",
-    "#FF6437",
-  ];
-  let randomIndex = Math.round(Math.random() * colors.length);
-  return colors[randomIndex];
-}
-
-function createRandomGeometry() {
-  let geometries = [
-    <boxGeometry/>,
-    <circleGeometry/>,
-    <coneGeometry/>,
-    <cylinderGeometry/>,
-    <dodecahedronGeometry/>,
-    <icosahedronGeometry/>,
-    <octahedronGeometry/>,
-    <sphereGeometry/>,
-    <tetrahedronGeometry/>,
-    <torusGeometry/>,
-    <torusKnotGeometry/>,
-  ];
-  let chosenGeometryIndex = Math.floor(Math.random() * geometries.length);
-  let chosenGeometry = geometries[chosenGeometryIndex];
-  return chosenGeometry;
-}
-
-// SECTION 5: CREATE RANDOM OBJECTS
-function createObject(position) {
-  let geometry = createRandomGeometry();
-
-  let material = <meshBasicMaterial color={getRandomColor()} wireframe={true}/>;
-
-  let newObject = <mesh geometry material position={[position[0], position[1], position[2]]}/>;
-
-  return newObject;
-}
-
-// createObject([-4, 0, 0]);
-
-// SECTION 6: CREATE MANY OBJECTS
-function createManyRandomObjects() {
-  // these numbers were found thru experimentation- not an exact science!
-  let width = 2.5;
-  let height = 5;
-  let depth = 4.5;
-  return [
-    createObject([-width * 3, height, -depth]),
-    createObject([-width, height, -depth]),
-    createObject([width, height, -depth]),
-    createObject([width * 3, height, -depth]),
-
-    createObject([-width * 3, height / 3, -depth]),
-    createObject([-width, height / 3, -depth]),
-    createObject([width, height / 3, -depth]),
-    createObject([width * 3, height / 3, -depth]),
-
-    createObject([-width * 3, -height / 3, -depth]),
-    createObject([-width, -height / 3, -depth]),
-    createObject([width, -height / 3, -depth]),
-    createObject([width * 3, -height / 3, -depth]),
-
-    createObject([-width * 3, -height, -depth]),
-    createObject([-width, -height, -depth]),
-    createObject([width, -height, -depth]),
-    createObject([width * 3, -height, -depth]),
-  ];
-}
-
-function updateRotationsOfObjects() {
-  // call this function inside animate, and it will update the rotations of all objects
-  // by their custom rotation amounts.
-  if (!objects) {
-    return;
-  }
-  for (let i = 0; i < objects.length; i += 1) {
-    objects[i].rotation.x += rotations[i][0];
-    objects[i].rotation.y += rotations[i][1];
-    objects[i].rotation.z += rotations[i][2];
-  }
-}
-
-function Box(props) {
-  const ref = useRef()
-  // Subscribe this component to the render-loop, rotate the mesh every frame
+function SequenceableObject(props) {
+  const ref = useRef();
+  const { viewport } = useThree();
+  // Subscribe this component to the render-loop. Rotate the mesh every frame
   useFrame((state, delta) => {
-             ref.current.rotation.x += 0.01;
-             updateRotationsOfObjects();
-  })
-  // Return the view, these are regular Threejs elements expressed in JSX
+    updateObjectRotation(ref);
+  });
+
+  const material = <meshBasicMaterial color={props.color} wireframe={true} />;
+
+  // These numbers were found through experimentation- not an exact science!
+  const viewportScaleFactor = (viewport.height * viewport.width) / 175;
+  let width = 2.5 * viewportScaleFactor;
+  let height = 5 * viewportScaleFactor;
+  const stepScaleFactor = props.currentSequenceIndex === props.index ? 2 : 1;
+
   return (
-    <mesh {...props} ref={ref}>
-      <boxGeometry args={[1, 1, 1]}/>
-      <meshStandardMaterial wireframe={true}/>
+    <mesh
+      ref={ref}
+      index={props.index}
+      position={[
+        props.basePosition[0] * width,
+        props.basePosition[1] * height,
+        0,
+      ]}
+      scale={viewportScaleFactor * stepScaleFactor}
+    >
+      {props.geometry}
+      {material}
     </mesh>
-  )
+  );
+}
+
+function updateObjectRotation(ref) {
+  ref.current.rotation.x += objectConfigs[ref.current.index].rotation[0];
+  ref.current.rotation.y += objectConfigs[ref.current.index].rotation[1];
+  ref.current.rotation.z += objectConfigs[ref.current.index].rotation[2];
 }
 
 export default function Visualizer() {
-  /* DECLARE STYLE AND TRIGGER FOR WIGGLE EFFECT FROM TODO ON NEXT LINE */
-  
+  const [currentSequenceIndex, setCurrentSequenceIndex] = useState();
   return (
-    <div className="page">
+    <>
+      <Sequencer setCurrentSequenceIndex={setCurrentSequenceIndex} />
       <Canvas>
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
-        <Box position={[-1.2, 0, 0]} />
-        <Box position={[1.2, 0, 0]} />
+        {objectConfigs.map((objectConfig, index) => (
+    <SequenceableObject
+      currentSequenceIndex={currentSequenceIndex}
+      key={index}
+      color={objectConfig.color}
+      geometry={objectConfig.geometry}
+      basePosition={objectConfig.basePosition}
+      index={index}
+    />
+  ))}
       </Canvas>
-    </div>
+    </>
   );
 }

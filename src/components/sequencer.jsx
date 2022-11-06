@@ -1,27 +1,54 @@
-import { getRandomColor, objects } from "./visualizer.js";
-import { synthConfig } from "./synthConfig.js";
+import { CONFIG } from "../config.js";
+import * as Tone from "tone";
 
-// SECTION 1: ADD MUSIC BUTTON !
+let part, synth; // define global variables
+let sequencerIsRunning = true;
+function getCurrentStep() {
+  return Math.round((part ? part.progress : 0) * 16);
+}
 
-let part, synth, loopNotes; // define global letiables
-
-let button = document.getElementById("start-button"); // find the button by its id (specified in the HTML)
-button.addEventListener("click", startSequencer); // when u click it, run startSequencer function
-
-function startSequencer() {
-  // set our synth letiable. 
-  // synthConfig lives in synthConfig.js: check it out and play with some of the values!
-  synth = new Tone.DuoSynth(synthConfig).toDestination();
-
-  part = new Tone.Part(runSequenceStep, loopNotes).start(0);
-  part.loop = Infinity;
+export function toggleSequencer(setCurrentSequenceIndex) {
+  // set our synth variable.
+  // synthConfig lives in lib/synthConfig.js: check it out and play with some of the values!
+  Tone.Transport.start();
   Tone.Transport.bpm.value = 90;
+  synth = new Tone.DuoSynth(CONFIG.synth).toDestination();
+  if (!part) {
+    part = new Tone.Part(
+      (time, value) => runSequenceStep(time, value, setCurrentSequenceIndex),
+      loopNotes
+    );
+    part.loop = true;
+  }
+  if (sequencerIsRunning) {
+    console.log("Starting sequence!");
+    part.start(0);
+    sequencerIsRunning = false;
+  } else {
+    console.log("Stopping sequence.");
+    part.stop();
+    sequencerIsRunning = true;
+  }
+}
+
+let timeoutId;
+window.addEventListener(
+  "resize",
+  function (event) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(onResizeFinish, 200);
+    Tone.Transport.pause();
+  },
+  true
+);
+
+function onResizeFinish() {
   Tone.Transport.start();
 }
 
 // SECTION 2: SETUP OUR LOOP!
 
-loopNotes = [
+const loopNotes = [
   // time is in Bars:Beats:Sixteenths
   { time: "0:0:0", note: "C2", velocity: 1.0 },
   { time: "0:0:1", note: "E4", velocity: 0.6 },
@@ -41,33 +68,12 @@ loopNotes = [
   { time: "0:0:15", note: "G4", velocity: 0.4 },
 ];
 
-function runSequenceStep(time, value) {
-  let currentStep = Math.round((part ? part.progress : 0) * 16);
-
-  applyMusicToGraphics(currentStep)
+function runSequenceStep(time, value, setCurrentSequenceIndex) {
+  setCurrentSequenceIndex(getCurrentStep());
 
   //actually play the note!
   synth.triggerAttackRelease(value.note, "32n", time, value.velocity);
-}
-
-
-// SECTION 3: APPLY MUSIC TO THE GRAPHICS WE CREATED!
-function applyMusicToGraphics(currentStep){
-  for (let i = 0; i < objects.length; i += 1) {
-    if (i === currentStep) {
-      // makes the object corresponding to the current step get bigger!
-      objects[i].scale.set(1.5, 1.5, 1.5);
-    } else {
-      objects[i].scale.set(1, 1, 1);
-    }
-
-    if (currentStep === 0) {
-      // we're at the beginning of the musical loop!
-      objects[i].scale.set(2, 2, 2);
-      objects[i].material.color.set(getRandomColor());
-      // setRandomNote(i);
-    }
-  }
+  console.log("playing note", value.note)
 }
 
 function setRandomNote(objectIndex) {
@@ -86,4 +92,15 @@ function getRandomNote(octave) {
   let randomPitchClass = pitchClasses[randomPitchClassIndex];
   let randomNote = `${randomPitchClass}${octave}`;
   return randomNote;
+}
+
+export function Sequencer(props) {
+  return (
+    <button
+      className="btn-custom"
+      onClick={() => toggleSequencer(props.setCurrentSequenceIndex)}
+    >
+      start/stop sequencer!
+    </button>
+  );
 }
