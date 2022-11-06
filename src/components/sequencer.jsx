@@ -8,7 +8,6 @@ function getCurrentStep() {
 }
 
 export function toggleSequencer(setCurrentSequenceIndex) {
-  console.log("Starting sequence!");
   // set our synth variable.
   // synthConfig lives in lib/synthConfig.js: check it out and play with some of the values!
   Tone.Transport.start();
@@ -22,9 +21,11 @@ export function toggleSequencer(setCurrentSequenceIndex) {
     part.loop = true;
   }
   if (sequencerIsRunning) {
-    part.start(Tone.now());
+    console.log("Starting sequence!");
+    part.start(0);
     sequencerIsRunning = false;
   } else {
+    console.log("Stopping sequence.");
     part.stop();
     sequencerIsRunning = true;
   }
@@ -72,6 +73,7 @@ function runSequenceStep(time, value, setCurrentSequenceIndex) {
 
   //actually play the note!
   synth.triggerAttackRelease(value.note, "32n", time, value.velocity);
+  console.log("playing note", value.note)
 }
 
 function setRandomNote(objectIndex) {
