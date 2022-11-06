@@ -29,7 +29,7 @@
     "not dead"
   ],
   "engines": {
-    "node": "^18.x"
+    "node": "^16.x"
   },
   "repository": {
     "type": "git",
