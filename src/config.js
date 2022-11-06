@@ -45,4 +45,7 @@ export const CONFIG = {
     voice0,
     voice1,
   },
+  visualizer: {
+    baseRotationSpeed: 0.04,
+  }
 };
