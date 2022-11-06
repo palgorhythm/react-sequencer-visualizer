@@ -17,8 +17,7 @@ import "./styles/styles.css";
 // Where all of our pages come from
 import PageRouter from "./components/router.jsx";
 
-// Home function that is reflected across the site
-export default function Home() {
+export default function App() {
   return (
     <Router>
       <main role="main" className="wrapper">
@@ -37,9 +36,9 @@ export default function Home() {
           <Link href="/visualizer">Visualizer</Link>
         </div>
         <a
-          className="btn--remix"
+          className="btn-custom"
           target="_top"
-          href="https://glitch.com/edit/#!/remix/glitch-hello-react"
+          href="https://glitch.com/edit/#!/remix/react-sequencer-visualizer"
         >
           <img src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140" alt="" />
           Remix on Glitch

@@ -1,6 +1,6 @@
-import { createRoot } from "react-dom/client";
 import React, { useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Sequencer } from "../components/sequencer";
 
 const CONFIG = {
   rotation: {
@@ -10,12 +10,16 @@ const CONFIG = {
 };
 
 let rotations = [];
+let randomColors = [];
+let randomGeometries = [];
 for (let i = 0; i < CONFIG.numObjects; i += 1) {
   rotations.push([
     Math.random() * CONFIG.rotation.speed,
     Math.random() * CONFIG.rotation.speed,
     Math.random() * CONFIG.rotation.speed,
   ]);
+  randomColors.push(getRandomColor());
+  randomGeometries.push(getRandomGeometry());
 }
 
 export function getRandomColor() {
@@ -61,58 +65,65 @@ function getRandomGeometry() {
   return chosenGeometry;
 }
 
-// SECTION 5: CREATE RANDOM OBJECTS
 function RandomObject(props) {
   const ref = useRef();
-  // Subscribe this component to the render-loop, rotate the mesh every frame
+  const { viewport } = useThree();
+  // Subscribe this component to the render-loop. Rotate the mesh every frame
   useFrame((state, delta) => {
     updateObjectRotation(ref);
   });
 
-  const geometry = getRandomGeometry();
+  const material = <meshBasicMaterial color={props.color} wireframe={true} />;
 
-  const material = (
-    <meshBasicMaterial color={getRandomColor()} wireframe={true} />
-  );
+  // These numbers were found through experimentation- not an exact science!
+  const viewportScaleFactor = (viewport.height * viewport.width) / 175;
+  let width = 2.5 * viewportScaleFactor;
+  let height = 5 * viewportScaleFactor;
+  const stepScaleFactor = props.currentSequenceIndex === props.index ? 2 : 1;
 
   return (
     <mesh
       ref={ref}
       index={props.index}
-      position={[props.position[0], props.position[1], props.position[2]]}
+      position={[
+        props.basePosition[0] * width,
+        props.basePosition[1] * height,
+        0,
+      ]}
+      scale={viewportScaleFactor * stepScaleFactor}
     >
-      {geometry}
+      {props.geometry}
       {material}
     </mesh>
   );
 }
 
-function createManyRandomObjects() {
-  // these numbers were found thru experimentation- not an exact science!
-  let width = 2;
-  let height = 5;
-  let depth = 4.5;
-  const positionVectors = [
-    [-3, 1, -1],
-    [-1, 1, -1],
-    [1, 1, -1],
-    [3, 1, -1],
-    [-3, 1 / 3, -1],
-    [-1, 1 / 3, -1],
-    [1, 1 / 3, -1],
-    [3, 1 / 3, -1],
-    [-3, -1 / 3, -1],
-    [-1, -1 / 3, -1],
-    [1, -1 / 3, -1],
-    [3, -1 / 3, -1],
-    [-3, -1, -1],
-    [-1, -1, -1],
-    [1, -1, -1],
-    [3, -1, -1],
+function createManyRandomObjects(currentSequenceIndex) {
+  const basePositionVectors = [
+    [-3, 1],
+    [-1, 1],
+    [1, 1],
+    [3, 1],
+    [-3, 1 / 3],
+    [-1, 1 / 3],
+    [1, 1 / 3],
+    [3, 1 / 3],
+    [-3, -1 / 3],
+    [-1, -1 / 3],
+    [1, -1 / 3],
+    [3, -1 / 3],
+    [-3, -1],
+    [-1, -1],
+    [1, -1],
+    [3, -1],
   ];
-  return positionVectors.map((vector, index) => (
+  return basePositionVectors.map((vector, index) => (
     <RandomObject
-      position={[width * vector[0], height * vector[1], depth * vector[2]]}
+      currentSequenceIndex={currentSequenceIndex}
+      key={index}
+      color={randomColors[index]}
+      geometry={randomGeometries[index]}
+      basePosition={[vector[0], vector[1], vector[2]]}
       index={index}
     />
   ));
@@ -122,15 +133,18 @@ function updateObjectRotation(ref) {
   ref.current.rotation.x += rotations[ref.current.index][0];
   ref.current.rotation.y += rotations[ref.current.index][1];
   ref.current.rotation.z += rotations[ref.current.index][2];
-  ref.current.scale = window.innerHeight * 0.01;
 }
 
 export default function Visualizer() {
+  const [currentSequenceIndex, setCurrentSequenceIndex] = useState();
   return (
-    <Canvas>
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      {createManyRandomObjects()}
-    </Canvas>
+    <>
+      <Sequencer setCurrentSequenceIndex={setCurrentSequenceIndex} />
+      <Canvas>
+        <ambientLight />
+        <pointLight position={[10, 10, 10]} />
+        {createManyRandomObjects(currentSequenceIndex)}
+      </Canvas>
+    </>
   );
 }

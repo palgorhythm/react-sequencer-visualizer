@@ -1,20 +1,41 @@
-import * as React from "react";
+import { useState, useRef } from "react";
 import { animated } from "react-spring";
 import { useWiggle } from "../hooks/wiggle";
 import { Link } from "wouter";
+import { Canvas, useFrame } from "@react-three/fiber";
 
 // Our language strings for the header
-const strings = [
-  "Hello React",
-  "Salut React",
-  "Hola React",
-  "안녕 React",
-  "Hej React",
-];
+const strings = ["Hello", "Salut", "Hola", "안녕", "Hej"];
 
 // Utility function to choose a random value from the language array
 function randomLanguage() {
   return strings[Math.floor(Math.random() * strings.length)];
+}
+
+function RotatingCube(props) {
+  const ref = useRef();
+  useFrame(() => (ref.current.rotation.x = ref.current.rotation.y += 0.01));
+  return (
+    <mesh
+      ref={ref}
+      onClick={props.onClick}
+      className="mesh-clickable"
+      scale={3}
+    >
+      <boxGeometry />
+      <meshStandardMaterial color={"orange"} wireframe={true} />
+    </mesh>
+  );
+}
+
+function ThreeCanvas(props) {
+  return (
+    <Canvas>
+      <ambientLight />
+      <pointLight position={[10, 10, 10]} />
+      <RotatingCube onClick={props.handleChangeHello} />
+    </Canvas>
+  );
 }
 
 /**
@@ -28,7 +49,7 @@ export default function Home() {
   /* We use state to set the hello string from the array https://reactjs.org/docs/hooks-state.html
      - We'll call setHello when the user clicks to change the string
   */
-  const [hello, setHello] = React.useState(strings[0]);
+  const [hello, setHello] = useState(strings[0]);
 
   /* The wiggle function defined in /hooks/wiggle.jsx returns the style effect and trigger function
      - We can attach this to events on elements in the page and apply the resulting style
@@ -48,28 +69,29 @@ export default function Home() {
       <h1 className="title">{hello}!</h1>
       {/* When the user hovers over the image we apply the wiggle style to it */}
       <animated.div onMouseEnter={trigger} style={style}>
-        <img
+        {/* <img
           src="https://cdn.glitch.com/2f80c958-3bc4-4f47-8e97-6a5c8684ac2c%2Fillustration.svg?v=1618196579405"
           className="illustration"
           onClick={handleChangeHello}
           alt="Illustration click to change language"
-        />
+        /> */}
+        <ThreeCanvas handleChangeHello={handleChangeHello} />
       </animated.div>
-      <div className="navigation">
-        {/* When the user hovers over this text, we apply the wiggle function to the image style */}
-        <animated.div onMouseEnter={trigger}>
-          <a className="btn--click-me" onClick={handleChangeHello}>
-            Psst, click me
-          </a>
-        </animated.div>
-      </div>
       <div className="instructions">
         <h2>Using this project</h2>
         <p>
-          This is the Glitch <strong>Hello React</strong> project. You can use
-          it to build your own app. See more info in the{" "}
-          <Link href="/about">About</Link> page, and check out README.md in the
-          editor for additional detail plus next steps you can take!
+          This is the{" "}
+          <strong>
+            Intro to Creative Coding in React with{" "}
+            <Link href="https://threejs.org/">Three.JS</Link> and{" "}
+            <Link href="https://tonejs.github.io/">Tone.JS</Link>
+          </strong>
+          .
+          <br />
+          You can use this project as a starter to build your own app.
+          <br />
+          See more info in the <Link href="/about">About</Link> page, and check
+          out README.md in the editor for additional detail!
         </p>
       </div>
     </>

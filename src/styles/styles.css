@@ -17,6 +17,18 @@ to this section's matching END comment to see page-specific styles.
   --font-family-header: "HK Grotesk";
 }
 
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* Basic page style resets */
 * {
   box-sizing: border-box;
@@ -39,13 +51,13 @@ to this section's matching END comment to see page-specific styles.
 }
 
 /* Our remix on glitch button */
-.btn--remix {
+.btn-custom {
   font-family: HK Grotesk;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.5rem;
   font-size: 1.1rem;
   line-height: 1rem;
   font-weight: 500;
-  height: 2.75rem;
+  height: 2.6rem;
   align-items: center;
   cursor: pointer;
   background: #FFFFFF;
@@ -56,12 +68,17 @@ to this section's matching END comment to see page-specific styles.
   color: #000;
   white-space: nowrap;
   margin-left: auto;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
 }
-.btn--remix img {
+.btn-custom img {
   margin-right: 0.5rem;
 }
-.btn--remix:hover {
+.btn-custom:hover {
   background-color: #D0FFF1;
+}
+.btn-custom:active {
+  box-shadow: 7px 6px 20px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Navigation grid */
@@ -75,8 +92,8 @@ to this section's matching END comment to see page-specific styles.
   border-top: 4px solid #fff;
 }
 
-.footer a:not(.btn--remix):link,
-a:not(.btn--remix):visited {
+.footer a:not(.btn-custom):link,
+a:not(.btn-custom):visited {
   font-family: HK Grotesk;
   font-style: normal;
   font-weight: normal;
@@ -105,6 +122,10 @@ END Glitch hello-app default styles
 body {
   font-family: HK Grotesk;
   background-color: var(--color-bg);
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 .wrapper {
   min-height: var(--wrapper-height);

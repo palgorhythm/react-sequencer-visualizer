@@ -14,9 +14,7 @@ export default function About() {
       {/* REPLACE H1 ELEMENT BELOW WITH CODE FROM TODO */}
       <h1 className="title">About this site</h1>
       {/* REPLACE OPENING P TAG BELOW WITH CODE FROM TODO */}
-      <p>
-        Welcome to the Creative Coding with React and ThreeJS starter project!
-      </p>
+      <p>Welcome!</p>
       <p>
         <em>
           If you're completely new to React, learning the{" "}
@@ -27,9 +25,8 @@ export default function About() {
       </p>
       <p>
         This page is a great spot to tell the world a few details about the new
-        React app you built on Glitch! Check out your project's{" "}
-        <code>readme</code> file to learn more about how to customize your
-        content.
+        React app! Check out your project's <code>readme</code> file to learn
+        more about how to customize your content.
       </p>
       <ul>
         <li>
