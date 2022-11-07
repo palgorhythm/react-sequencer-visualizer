@@ -69,12 +69,6 @@ export default function Home() {
       <h1 className="title">{hello}!</h1>
       {/* When the user hovers over the image we apply the wiggle style to it */}
       <animated.div onMouseEnter={trigger} style={style}>
-        {/* <img
-          src="https://cdn.glitch.com/2f80c958-3bc4-4f47-8e97-6a5c8684ac2c%2Fillustration.svg?v=1618196579405"
-          className="illustration"
-          onClick={handleChangeHello}
-          alt="Illustration click to change language"
-        /> */}
         <ThreeCanvas handleChangeHello={handleChangeHello} />
       </animated.div>
       <div className="instructions">

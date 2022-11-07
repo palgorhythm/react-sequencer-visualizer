@@ -1,6 +1,6 @@
-# Hello React!
+# Let's Create With Code!
 
-This project contains a foundation for building and learning about React apps, as well as a foundation for creative coding with Three.JS and Tone.JS. The site includes three routes showing how navigation works in a single page app. We manage the page head and body using a standard React flow. The homepage features a click effect that demonstrates using state, and the visualizer page has shapes built with Three.JS (a web graphics library) that are controlled by a sequence running with Tone.JS (a web audio library).
+This project contains a foundation for building and learning about React apps, as well as a foundation for creative coding with ThreeJS and ToneJS. The site includes three routes showing how navigation works in a single page app. We manage the page head and body using a standard React flow. The homepage features a click effect that demonstrates using state, and the visualizer page has shapes built with Three.JS (a web graphics library) that are controlled by a sequence running with Tone.JS (a web audio library).
 
 [React](https://reactjs.org/) is a popular UI library for building web apps. [Vite](https://vitejs.dev/) is a powerful tool for building JavaScript apps that bundles all of your code and shows immediate changes while you're editing.
 
@@ -30,6 +30,8 @@ React defines site components in [JSX](https://reactjs.org/docs/introducing-jsx.
 
 ← `src/components/router.jsx`: One of the most important parts of a single page app is the router. It's how we know what page to show–the code maps the paths to the Home and About components. We're using [Wouter](https://github.com/molefrog/wouter), a tiny minimalist router. You could replace it for something like [React Router](https://reactrouter.com/).
 
+← `src/components/sequencer.jsx`: This file contains the code for the Sequencer component, which handles all of the ToneJS control in the app.
+
 ### Hooks 🪝
 
 ← `src/hooks/`: [Hooks](https://reactjs.org/docs/hooks-intro.html) are a powerful way to provide interaction with your app.
@@ -43,6 +45,8 @@ React defines site components in [JSX](https://reactjs.org/docs/introducing-jsx.
 ← `src/pages/about.jsx`: The content of the About page, defined as a component function.
 
 ← `src/pages/home.jsx` The content of the Home page, also defined as a component function. The page includes the animated effect on hover, and title change effect on click (which is also a handy demo of using state data in React).
+
+← `src/pages/visualizer.jsx` This page contains the ThreeJS visualizer, which is controlled by the Sequencer component, and which displays moving 3D objects!
 
 ## Try this next 🏗️
 

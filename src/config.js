@@ -47,5 +47,5 @@ export const CONFIG = {
   },
   visualizer: {
     baseRotationSpeed: 0.04,
-  }
+  },
 };
